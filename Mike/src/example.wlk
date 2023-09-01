@@ -37,19 +37,27 @@ object juego{
 		game.onTick(50, "controlEnemigo2", { if(enemigo2.vida()<=0){enemigo2.sprite("enemigoMuerto")} })
 		
 		//CONTROLES
-		keyboard.a().onPressDo { personaje.atacarBasico()}
-		keyboard.s().onPressDo { personaje.atacarFuerte() }
-		keyboard.num2().onPressDo { personaje.fijar(0) 
-			game.say((personaje), "Atacare al de medio!!!")
-		}
-		keyboard.num1().onPressDo { personaje.fijar(1) 
-			game.say((personaje), "Atacare al del arriba!!!")
-		}
-		keyboard.num3().onPressDo { personaje.fijar(2) 
-			game.say((personaje), "Atacare al de abajo!!!")
-		}
-
+		keyboard.a().onPressDo { 
+			if(menuBatalla.seleccion()==0 and menuBatalla.seccion()==0){
+				menuBatalla.seccion(menuBatalla.seccion()+1)
+			}
+			menuBatalla.seleccionOpciones()
+ 		}
+		//keyboard.s().onPressDo { personaje.atacarFuerte() }
+		//keyboard.num2().onPressDo { personaje.fijar(0) 
+		//	game.say((personaje), "Atacare al de medio!!!")
+		//}
+		//keyboard.num1().onPressDo { personaje.fijar(1) 
+		//	game.say((personaje), "Atacare al del arriba!!!")
+		//}
+		//keyboard.num3().onPressDo { personaje.fijar(2) 
+		//	game.say((personaje), "Atacare al de abajo!!!")
+		//}
+		
 		keyboard.m().onPressDo { game.clear() }
+		//CONTROLES MENU
+		keyboard.left().onPressDo { menuBatalla.seleccionOpciones() }
+		keyboard.right().onPressDo { menuBatalla.seleccionOpciones() }
 		
 		
 		game.start()
@@ -628,6 +636,8 @@ object mensaje {
 
 object menuBatalla{
 	
+	var property seleccion = 0//0 o 1
+	var property seccion = 0 //0=Inicio 1=ElegirAtaque 2=FijarObjetivo 
 	var property position = game.origin()
 	
 	method image() = "menu.png"
@@ -637,6 +647,35 @@ object menuBatalla{
 		game.addVisual(nombre)
 		game.addVisual(vida)
 		game.addVisual(stamina)
+		
+	}
+	
+	method seleccionOpciones(){
+		
+		if(self.seleccion() == 0){
+			
+			self.seleccion(1)
+			
+		}else{self.seleccion(0)}
+		
+		if (self.seccion() == 0){
+			if (self.seleccion()==0){
+				menuOpcion1.sprite("menuAtacarSeleccionado")
+				menuOpcion2.sprite("menuProtejer")
+			}else{
+				menuOpcion1.sprite("menuAtacar")
+				menuOpcion2.sprite("menuProtejerSeleccionado")
+			}
+		}
+		if(self.seccion() == 1){
+			if (self.seleccion()==0){
+				menuOpcion1.sprite("menuAtaqueBasicoSeleccionado")
+				menuOpcion2.sprite("menuAtaqueFuerte")
+			}else{
+				menuOpcion1.sprite("menuAtaqueBasico")
+				menuOpcion2.sprite("menuAtaqueFuerteSeleccionado")
+			}
+		}
 		
 	}
 	
