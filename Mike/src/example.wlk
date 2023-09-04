@@ -25,6 +25,7 @@ object juego{
 		game.addVisual(menuBatalla)
 		game.addVisual(menuOpcion1)
 		game.addVisual(menuOpcion2)
+		game.addVisual(flecha)
 		menuBatalla.datosPersonajeActual()
 		
 		
@@ -38,23 +39,26 @@ object juego{
 		
 		//CONTROLES
 		keyboard.a().onPressDo { 
-			if(menuBatalla.seleccion()==0 and menuBatalla.seccion()==0){
+			if((menuBatalla.seleccion()==0 and menuBatalla.seccion()==0) or menuBatalla.seccion()==1){
 				menuBatalla.seccion(menuBatalla.seccion()+1)
+			}
+			if(menuBatalla.seccion()==2){
+				flecha.sprite("menuFijarFlecha")
 			}
 			menuBatalla.seleccionOpciones()
  		}
-		//keyboard.s().onPressDo { personaje.atacarFuerte() }
-		//keyboard.num2().onPressDo { personaje.fijar(0) 
-		//	game.say((personaje), "Atacare al de medio!!!")
-		//}
-		//keyboard.num1().onPressDo { personaje.fijar(1) 
-		//	game.say((personaje), "Atacare al del arriba!!!")
-		//}
-		//keyboard.num3().onPressDo { personaje.fijar(2) 
-		//	game.say((personaje), "Atacare al de abajo!!!")
-		//}
+		keyboard.s().onPressDo { 
+			if(0 < menuBatalla.seccion()){
+				menuBatalla.seccion(menuBatalla.seccion()-1)
+			}
+			menuBatalla.seleccionOpciones()
+			flecha.sprite("invisible")
+		}
 		
-		keyboard.m().onPressDo { game.clear() }
+		
+		//keyboard.m().onPressDo { game.clear() }
+		
+		
 		//CONTROLES MENU
 		keyboard.left().onPressDo { menuBatalla.seleccionOpciones() }
 		keyboard.right().onPressDo { menuBatalla.seleccionOpciones() }
@@ -348,7 +352,7 @@ object enemigo0{
 	var num = 0
 	var sprite = "enemigo0"
 	
-	var property position = game.at(33,12)
+	var property position = game.at(29,16)
 	
 	method ataque(){return ataque}
 	
@@ -440,7 +444,7 @@ object enemigo1{
 	var ataque = 5
 	var sprite = "enemigo0"
 	
-	var property position = game.at(29,16)
+	var property position = game.at(33,12)
 	
 	method ataque(){return ataque}
 	
@@ -623,7 +627,6 @@ object fondo{
 	method image() = "fondo0.png"
 
 }
-
 object mensaje {
 	
 	var property position = game.at(9,14)
@@ -633,7 +636,6 @@ object mensaje {
 	method textColor() = "FF0000"
 	
 }
-
 object menuBatalla{
 	
 	var property seleccion = 0//0 o 1
@@ -649,15 +651,17 @@ object menuBatalla{
 		game.addVisual(stamina)
 		
 	}
-	
 	method seleccionOpciones(){
 		
-		if(self.seleccion() == 0){
-			
-			self.seleccion(1)
-			
-		}else{self.seleccion(0)}
-		
+		if(self.seccion()==2){
+			if(self.seleccion()==0 or self.seleccion()==1){
+				self.seleccion(self.seleccion()+1)
+			}else{self.seleccion(0)}
+		}else{
+			if(self.seleccion() == 0){			
+				self.seleccion(1)
+			}else{self.seleccion(0)}	
+		}
 		if (self.seccion() == 0){
 			if (self.seleccion()==0){
 				menuOpcion1.sprite("menuAtacarSeleccionado")
@@ -667,7 +671,7 @@ object menuBatalla{
 				menuOpcion2.sprite("menuProtejerSeleccionado")
 			}
 		}
-		if(self.seccion() == 1){
+		if (self.seccion() == 1){
 			if (self.seleccion()==0){
 				menuOpcion1.sprite("menuAtaqueBasicoSeleccionado")
 				menuOpcion2.sprite("menuAtaqueFuerte")
@@ -676,11 +680,22 @@ object menuBatalla{
 				menuOpcion2.sprite("menuAtaqueFuerteSeleccionado")
 			}
 		}
-		
+		if (self.seccion() == 2){
+			menuOpcion1.sprite("menuFijar")
+			menuOpcion2.sprite("invisible")
+			if(self.seleccion()==0){
+				flecha.position(enemigo0.position())
+			}
+			if(self.seleccion()==1){
+				flecha.position(enemigo1.position())
+			}
+			if(self.seleccion()==2){
+				flecha.position(enemigo2.position())	
+			}
+		}
 	}
 	
 }
-
 object menuOpcion1{
 	
 	var property sprite = "menuAtacar"
@@ -723,4 +738,10 @@ object stamina{
 	
 	method textColor() = "0FE001"
 	
+}
+object flecha{
+	var property sprite = "invisible"
+	var property position = enemigo0.position()
+	
+	method image() = sprite + ".png"
 }
